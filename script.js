@@ -1,44 +1,59 @@
-function inserDisplay(data) {
-    document.querySelector('#display').value += data; // incremento de valor o sinal de += adiciona mais caracteres na tela
-};
+class Calculator{
+    constructor(){
+        this.getDisplayId = '#display';                         // Aqui pega somente o id do display;
+    }
 
-function cleanData() {
-    document.querySelector('#display').value = ''; // apaga os dados da variavel data
-};
+    get display(){
+        return document.querySelector(this.getDisplayId);      // Quando chamarmos this.getDisplayId ele busca lá no html;
+    };
 
-function backSpace() {
-    const display = document.querySelector('#display');
-    display.value = display.value.slice(0, -1); // apaga o ultimo número - 'slice'= busque mais informações sobre ele
-};
+    getValue(){
+        return this.display.value;
+    }
 
-function clean_Memory() {
-    localStorage.clear();
-    cleanData();
-    load_History()
-};
+    setValue(value){
+        this.display.value = value;
+    }
 
-function convert_str_to_numb() {
+    insertDisplay(char){
+        const current = this.getValue();
+        this.setValue(current + char)
+    }
+
+    clearDisplay(){
+        this.setValue('');
+    }
+
+    backSpace(){
+        const corrent = this.getValue();
+        this.setValue(corrent.slice(0, -1));
+    }
+}
+
+const calc = new Calculator();
+
+function convertStringToNumbers() {
     const display = document.querySelector('#display');
     const expressao = display.value;
     let numeros = [];
     let operadores = [];
     let numeroAtual = "";
     for (let n = 0; n < expressao.length; n++) {
-        const caracteres = expressao[n];
+        const char = expressao[n];
         const operadorValidos = ['+', '-', '*', '/'];
-        if (operadorValidos.includes(caracteres)) {
+        if (operadorValidos.includes(char)) {
             numeros.push(parseFloat(numeroAtual));
-            operadores.push(caracteres);
+            operadores.push(char);
             numeroAtual = "";
         } else {
-            numeroAtual += caracteres
+            numeroAtual += char
         }
     }
     numeros.push(parseFloat(numeroAtual));
     return { numeros, operadores };
 }
 
-function square_root() {
+function squareRoot() {
     const { numeros, operadores } = convert_str_to_numb();
 
     if (numeros.length === 0) {
@@ -64,7 +79,7 @@ function square_root() {
     }
 }
 
-function calculate_Percentage(){
+function calculatePercentage(){
     const { numeros, operadores } = convert_str_to_numb();
 
     if (numeros.length === 0) {
@@ -116,7 +131,7 @@ function result() {
     return result;
 }
 
-function save_results(expression, result) {
+function saveResults(expression, result) {
     try {
         const historyItem = `${expression}=${result}`;
         const historyArrayString = localStorage.getItem('calc_history');
@@ -133,7 +148,7 @@ function save_results(expression, result) {
     }
 }
 
-function load_History() {
+function loadHistory() {
     const listaDeHistorico = document.querySelector('#historico-lista');
     listaDeHistorico.innerHTML = '';
     const historyArrayString = localStorage.getItem('calc_history');
